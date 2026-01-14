@@ -45,17 +45,16 @@ public class EventService {
 
     private String uploadImg(MultipartFile multipartFile) {
         String fileName = UUID.randomUUID() + "-" + multipartFile.getOriginalFilename();
-
         try {
-
             File file = this.convertMultipartToFile(multipartFile);
-            s3client.putObject(bucketName, fileName, file)
+            s3client.putObject(bucketName, fileName, file);
+            file.delete();
+            return s3client.getUrl(bucketName, fileName).toString();
 
-        } catch (Exception ignored) {
-
+        } catch (Exception e) {
+            System.out.println("erro ao subir " + e.getMessage());
+            return null;
         }
-
-        return "";
     }
 
     private File convertMultipartToFile(MultipartFile multipartFile) throws IOException {
